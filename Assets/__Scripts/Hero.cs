@@ -93,8 +93,10 @@ public class Hero : MonoBehaviour
         {
             _shieldLevel = Mathf.Min(value, 4);                             // b
             // If the shield is going to be set to less than zero
-            if (value < 0)
-            {
+            if (value < 0){
+            Destroy(this.gameObject);
+            Main.S.DelayedRestart(gameRestartDelay);
+
             }
         }
     }
