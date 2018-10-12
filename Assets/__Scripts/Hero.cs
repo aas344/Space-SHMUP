@@ -46,7 +46,56 @@ public class Hero : MonoBehaviour
 
         // Rotate the ship to make it feel more dynamic                      // c
         transform.rotation = Quaternion.Euler(yAxis * pitchMult, xAxis * rollMult, 0);
-
+        // Allow the ship to fire
+        if (Input.GetKeyDown(KeyCode.Space))
+        {                            // a
+            TempFire();
         }
     }
 
+    void TempFire()
+    {                                                        // b
+        GameObject projGO = Instantiate<GameObject>(projectilePrefab);
+        projGO.transform.position = transform.position;
+        Rigidbody rigidB = projGO.GetComponent<Rigidbody>();
+        rigidB.velocity = Vector3.up * projectileSpeed;
+    }
+    void OnTriggerEnter(Collider other)
+    {
+        Transform rootT = other.gameObject.transform.root;
+        GameObject go = rootT.gameObject;
+        //print("Triggered: "+go.name);                                      // b
+
+        // Make sure it's not the same triggering go as last time
+        if (go == lastTriggerGo)
+        {                                           // c
+            return;
+        }
+        lastTriggerGo = go;                                                  // d
+
+        if (go.tag == "Enemy")
+        {  // If the shield was triggered by an enemy
+            shieldLevel--;        // Decrease the level of the shield by 1
+            Destroy(go);          // … and Destroy the enemy                 // e
+        }
+        else
+        {
+            print("Triggered by non-Enemy: " + go.name);                      // f
+        }
+    }
+    public float shieldLevel
+    {
+        get
+        {
+            return (_shieldLevel);                                         // a
+        }
+        set
+        {
+            _shieldLevel = Mathf.Min(value, 4);                             // b
+            // If the shield is going to be set to less than zero
+            if (value < 0)
+            {
+            }
+        }
+    }
+}
